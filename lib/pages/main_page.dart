@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_mate/models/movie_model.dart';
 import 'package:movie_mate/services/movie_services.dart';
+import 'package:movie_mate/widgets/movie_details.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -64,6 +65,33 @@ class _MainPageState extends State<MainPage> {
             color: Colors.redAccent,
             fontSize: 24,
           ),
+        ),
+      ),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          if (!_isLoading &&
+              _hasMore &&
+              notification.metrics.pixels ==
+                  notification.metrics.maxScrollExtent) {
+            _fetchMovie();
+          }
+          return true;
+        },
+        child: ListView.builder(
+          itemCount: _movie.length + (_isLoading ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == _movie.length) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.redAccent,
+                  strokeWidth: 4,
+                ),
+              );
+            }
+            final Movie movie = _movie[index];
+
+            return MovieDetails(movie: movie);
+          },
         ),
       ),
     );
