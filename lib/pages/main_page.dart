@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_mate/models/movie_model.dart';
+import 'package:movie_mate/pages/single_movie_details.dart';
 import 'package:movie_mate/services/movie_services.dart';
 import 'package:movie_mate/widgets/movie_details.dart';
 
@@ -90,7 +91,13 @@ class _MainPageState extends State<MainPage> {
             }
             final Movie movie = _movie[index];
 
-            return MovieDetails(movie: movie);
+            return GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return SingleMovieDetails(movie: movie);
+                  }));
+                },
+                child: MovieDetails(movie: movie));
           },
         ),
       ),

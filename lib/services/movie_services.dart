@@ -68,4 +68,64 @@ class MovieServices {
       throw Exception('$e');
     }
   }
+
+  //similar movies
+  Future<List<Movie>> fetchSimilarMovies(int movieId) async {
+    try {
+      final response = await http.get(Uri.parse(
+          '$_baseUrl/$movieId/similar?api_key=$_apiKey'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> results = data['results'];
+
+        return results.map((movieData) => Movie.fromJson(movieData)).toList();
+      } else {
+        throw Exception('Failed to load similar movies');
+      }
+    } catch (e) {
+      print('Error fetching similar movies: $e');
+      return [];
+    }
+  }
+
+  // recommended movies
+  Future<List<Movie>> fetchRecommendedMovies(int movieId) async {
+    try {
+      final response = await http.get(Uri.parse(
+          '$_baseUrl/$movieId/recommendations?api_key=$_apiKey'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> results = data['results'];
+
+        return results.map((movieData) => Movie.fromJson(movieData)).toList();
+      } else {
+        throw Exception('Failed to load recommended movies');
+      }
+    } catch (e) {
+      print('Error fetching recommended movies: $e');
+      return [];
+    }
+  }
+
+  // fetch images by movie id
+  Future<List<String>> fetchMovieImages(int movieId) async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://api.themoviedb.org/3/movie/$movieId/images?api_key=$_apiKey'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> backdrops = data['backdrops'];
+
+        return backdrops.take(10).map((image)=>"https://image.tmdb.org/t/p/w500${image['file_path']}").toList();
+      } else {
+        throw Exception('Failed to load movie images');
+      }
+    } catch (e) {
+      print('Error fetching movie images: $e');
+      return [];
+    }
+  }
 }
